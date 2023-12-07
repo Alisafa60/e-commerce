@@ -49,10 +49,10 @@ function isValidUserWithRole($user_id, $required_role) {
 
 
 // Authorization middleware
-function authorize($required_role) {
+function authorize($required_role, $required_user_id = null) {
     $secret_key = "lazy_susan";
 
-    //authorization header
+    // Authorization header
     $auth_header = $_SERVER['HTTP_AUTHORIZATION'];
     list($jwt_token) = sscanf($auth_header, 'Bearer %s');
 
@@ -62,7 +62,8 @@ function authorize($required_role) {
         if (
             $token_payload &&
             isset($token_payload['role']) &&
-            isValidUserWithRole($token_payload['user_id'], $required_role)
+            isValidUserWithRole($token_payload['user_id'], $required_role) &&
+            (!$required_user_id || $token_payload['user_id'] == $required_user_id)
         ) {
             return true;
         }

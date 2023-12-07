@@ -1,16 +1,16 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: *');
-
 include('db_connection.php');
 include('middleware.php'); 
-authorize('seller');
+
 
 $seller_id = $_POST['seller_id']; 
 $product_name = $_POST['product_name'];
 $description = $_POST['description'];
 $price = $_POST['price'];
 
+authorize('seller', $seller_id);
 // the entered seller ID corresponds to a user with a seller role
 if (!isValidSeller($seller_id)) {
     $response = ["status" => "false", "message" => "Invalid seller ID"];
