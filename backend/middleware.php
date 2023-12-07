@@ -22,10 +22,9 @@ function base64UrlDecode($data) {
 }
 
 // check if the user with a given user_id has the specified role
-function isValidUserWithRole($user_id, $required_role) {
+function getUserIDWithRole($user_id, $required_role) {
     global $mysqli;
 
-    // check if the required role exists in the role table
     $role_query = $mysqli->prepare('SELECT role_id FROM role WHERE role_name = ?');
     $role_query->bind_param('s', $required_role);
     $role_query->execute();
@@ -41,12 +40,15 @@ function isValidUserWithRole($user_id, $required_role) {
         $user_query->execute();
         $user_query->store_result();
 
-        return $user_query->num_rows > 0;
+        if ($user_query->num_rows > 0) {
+            $user_query->bind_result($user_id);
+            $user_query->fetch();
+            return $user_id;
+        }
     }
 
-    return false;
+    return null;
 }
-
 
 // Authorization middleware
 function authorize($required_role, $required_user_id = null) {
@@ -62,10 +64,10 @@ function authorize($required_role, $required_user_id = null) {
         if (
             $token_payload &&
             isset($token_payload['role']) &&
-            isValidUserWithRole($token_payload['user_id'], $required_role) &&
-            (!$required_user_id || $token_payload['user_id'] == $required_user_id)
+            ($user_id = getUserIDWithRole($token_payload['user_id'], $required_role)) !== null &&
+            (!$required_user_id || $user_id == $required_user_id)
         ) {
-            return true;
+            return $user_id; 
         }
     }
 
@@ -73,3 +75,4 @@ function authorize($required_role, $required_user_id = null) {
     echo json_encode(["status" => "false", "message" => "Unauthorized access"]);
     exit();
 }
+
