@@ -3,7 +3,6 @@ header('Access-Control-Allow-Origin:*');
 header('Access-Control-Allow-Headers:*');
 include("db_connection.php");
 
-
 function insertRoles($roles) {
     global $mysqli;
 
