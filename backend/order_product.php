@@ -28,8 +28,8 @@ if (isset($_SESSION['shopping_cart']) && !empty($_SESSION['shopping_cart'])) {
 
     // Add items to order history
     foreach ($_SESSION['shopping_cart'] as $product_id => $quantity) {
-        $insert_history_query = $mysqli->prepare('INSERT INTO order_history (order_id, product_id, quantity, order_date) VALUES (?, ?, ?, NOW())');
-        $insert_history_query->bind_param('iii', $order_id, $product_id, $quantity);
+        $insert_history_query = $mysqli->prepare('INSERT INTO order_history (order_id, quantity, order_date) VALUES (?, ?, NOW())');
+        $insert_history_query->bind_param('iii', $order_id, $quantity);
         $insert_history_query->execute();
         $insert_history_query->close();
     }
