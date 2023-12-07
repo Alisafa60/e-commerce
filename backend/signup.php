@@ -26,7 +26,7 @@ if ($role_row) {
     $query->execute();
 
     if ($query->affected_rows > 0) {
-        $response = ["status" => "true"];
+        $response = ["status" => "signed up succesfully"];
     } else {
         $response = ["status" => "false", "message" => "Failed to insert user into the database."];
     }
